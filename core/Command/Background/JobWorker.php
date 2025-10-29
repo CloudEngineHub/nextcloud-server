@@ -49,7 +49,7 @@ class JobWorker extends JobBase {
 				'interval',
 				'i',
 				InputOption::VALUE_OPTIONAL,
-				'Interval in seconds in which the worker should repeat already processed jobs',
+				'Interval in seconds in which the worker should repeat already processed jobs (set to 0 for no repeat)',
 				1
 			)
 			->addOption(
@@ -114,12 +114,14 @@ class JobWorker extends JobBase {
 				}
 
 				$output->writeln('Waiting for new jobs to be queued', OutputInterface::VERBOSITY_VERBOSE);
+				if ((int)$input->getOption('interval') === 0) {
+					break;
+				}
 				// Re-check interval for new jobs
-				sleep($input->getOption('interval'));
+				sleep((int)$input->getOption('interval'));
 				continue;
 			}
 
-			$output->writeln('<comment>Job ' . $job::class . ' is a TimedJob, this command is designed to run QueuedJob.</comment>');
 			$output->writeln('Running job ' . get_class($job) . ' with ID ' . $job->getId());
 
 			if ($output->isVerbose()) {
