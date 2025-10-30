@@ -45,7 +45,7 @@ interface ITeamManager {
 	 * @param list<Team> $teams
 	 * @return array<string, list<TeamResource>>
 	 *
-	 * @since 33.0.0
+	 * @since 32.0.2
 	 */
 	public function getSharedWithList(array $teams, string $userId): array;
 }
