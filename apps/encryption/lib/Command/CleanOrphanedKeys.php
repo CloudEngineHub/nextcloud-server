@@ -95,9 +95,15 @@ class CleanOrphanedKeys extends Command {
 			$folder = $this->rootFolder->get($folderPath);
 		} catch (NotFoundException $e) {
 			// Happens when user doesn't have encrypted files
-			$this->logger->error('Error when accessing folder ' . $folderPath . ' for user ' . $user . '. ' . $e->getMessage());
+			$this->logger->error('Error when accessing folder ' . $folderPath . ' for user ' . $user . , ['exception' => $e]);
 			return [];
 		}
+
+		if (!($folder instanceof Folder)) {
+				$this->logger->error('Invalid folder');
+			return [];
+		}
+
 		foreach ($folder->getDirectoryListing() as $item) {
 			$path = $folderPath . '/' . $item->getName();
 			$stopValue = $this->stopCondition($path);
@@ -148,7 +154,7 @@ class CleanOrphanedKeys extends Command {
 			try {
 				$file->delete();
 				$output->writeln('Key deleted: ' . $key);
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				$output->writeln('Failed to delete  ' . $key);
 				$this->logger->error('Error when deleting orphaned key ' . $key . '. ' . $e->getMessage());
 			}
@@ -164,7 +170,7 @@ class CleanOrphanedKeys extends Command {
 			try {
 				$this->rootFolder->get(trim($path))->delete();
 				$output->writeln('Key deleted: ' . $path);
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				$output->writeln('Failed to delete  ' . $path);
 				$this->logger->error('Error when deleting orphaned key ' . $path . '. ' . $e->getMessage());
 			}
